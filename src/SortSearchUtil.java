@@ -1,3 +1,4 @@
+import java.util.LinkedList;
 import java.util.Random;
 
 /**
@@ -25,6 +26,28 @@ public class SortSearchUtil {
         }
     }
 
+    public int binarySearch(int value, int[] array){
+        int first = 0;
+        int last = array.length - 1;
+        int middle = (first + last) / 2;
+
+        while(first <= last){
+            if(array[middle] < value){
+                first = middle + 1;
+            }else if(array[middle] == value){
+                return array[middle];
+            }
+            else{
+                last = middle - 1;
+            }
+            middle = (first + last)/2;
+            if(first > last){
+                return -1;
+            }
+        }
+        return -1;
+    }
+
 }
 
 class SortSearchUtilTester{
@@ -36,7 +59,7 @@ class SortSearchUtilTester{
             this.random = new Random(seed);
             this.intArray = new int[arraySize];
             for (int i = 0; i < arraySize; i++) {
-                this.intArray[i] = random.nextInt();
+                this.intArray[i] = random.nextInt(101);
             }
         }
 
@@ -47,10 +70,13 @@ class SortSearchUtilTester{
 
     public static void main(String[] args){
         SortSearchUtil ssu = new SortSearchUtil();
-        randArray randomArray = new randArray(100000, 100);
+        randArray randomArray = new randArray(1000,(int) System.currentTimeMillis());
         int[] test = randomArray.getIntArray();
         ssu.shellSort(test);
         printArray(test);
+
+
+        System.out.println(ssu.binarySearch(5,test));
     }
 
     private static void printArray(int[] array){
