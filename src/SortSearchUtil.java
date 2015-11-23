@@ -1,22 +1,21 @@
-import java.util.LinkedList;
-import java.util.Random;
+import java.util.*;
 
 /**
  * Created by jeff on 10/29/15.
  */
 public class SortSearchUtil {
 
-    public void shellSort(int[] array){
-        int increment = array.length / 2;
+    public void shellSort(ArrayList<Integer> array){
+        int increment = array.size() / 2;
         while(increment > 0){
-            for(int i = increment; i < array.length; i++){
+            for(int i = increment; i < array.size(); i++){
                 int j = i;
-                int temp = array[i];
-                while(j >= increment && array[j - increment] > temp){
-                    array[j] = array[j-increment];
+                int temp = array.get(i);
+                while(j >= increment && array.get(j - increment) > temp){
+                    array.set(j, array.get(j - increment));
                     j = j - increment;
                 }
-                array[j] = temp;
+                array.set(j, temp);
             }
             if (increment == 2) {
                 increment = 1;
@@ -48,35 +47,152 @@ public class SortSearchUtil {
         return -1;
     }
 
+    public <E extends Comparable<? super E>> List<E> mergeSort(List<E> m){
+        if(m.size() <= 1) return m;
+
+        int middle = m.size() / 2;
+        List<E> left = m.subList(0, middle);
+        List<E> right = m.subList(middle, m.size());
+
+        right = mergeSort(right);
+        left = mergeSort(left);
+        List<E> result = merge(left, right);
+
+        return result;
+    }
+
+    public <E extends Comparable<? super E>> List<E> merge(List<E> left, List<E> right){
+        List<E> result = new ArrayList<E>();
+        Iterator<E> it1 = left.iterator();
+        Iterator<E> it2 = right.iterator();
+
+        E x = it1.next();
+        E y = it2.next();
+        while (true){
+            //change the direction of this comparison to change the direction of the sort
+            if(x.compareTo(y) <= 0){
+                result.add(x);
+                if(it1.hasNext()){
+                    x = it1.next();
+                }else{
+                    result.add(y);
+                    while(it2.hasNext()){
+                        result.add(it2.next());
+                    }
+                    break;
+                }
+            }else{
+                result.add(y);
+                if(it2.hasNext()){
+                    y = it2.next();
+                }else{
+                    result.add(x);
+                    while (it1.hasNext()){
+                        result.add(it1.next());
+                    }
+                    break;
+                }
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Quicksort over an array
+     * @param arr int[]
+     * @param low
+     * @param high
+     */
+    public void quickSort(ArrayList<Integer> arr, int low, int high) {
+        if (arr == null || arr.size() == 0)
+            return;
+
+        if (low >= high)
+            return;
+
+        // pick the pivot
+        int middle = low + (high - low) / 2;
+        int pivot = arr.get(middle);
+
+        // make left < pivot and right > pivot
+        int i = low, j = high;
+        while (i <= j) {
+            while (arr.get(i) < pivot) {
+                i++;
+            }
+
+            while (arr.get(j) > pivot) {
+                j--;
+            }
+
+            if (i <= j) {
+                int temp = arr.get(i);
+                arr.set(i, arr.get(j));
+                arr.set(j, temp);
+                i++;
+                j--;
+            }
+        }
+
+        // recursively sort two sub parts
+        if (low < j)
+            quickSort(arr, low, j);
+
+        if (high > i)
+            quickSort(arr, i, high);
+    }
 }
 
 class SortSearchUtilTester{
     public static class randArray {
         private Random random;
-        private int[] intArray;
+        private ArrayList<Integer> intArray;
 
-        public randArray(int arraySize, int seed) {
-            this.random = new Random(seed);
-            this.intArray = new int[arraySize];
+        public randArray(int arraySize) {
+            this.random = new Random(System.currentTimeMillis());
+            this.intArray = new ArrayList<>();
             for (int i = 0; i < arraySize; i++) {
-                this.intArray[i] = random.nextInt(101);
+                this.intArray.add(i, random.nextInt());
             }
         }
 
-        public int[] getIntArray() {
+        public ArrayList<Integer> getIntArray() {
             return this.intArray;
         }
     }
 
     public static void main(String[] args){
         SortSearchUtil ssu = new SortSearchUtil();
-        randArray randomArray = new randArray(1000,(int) System.currentTimeMillis());
-        int[] test = randomArray.getIntArray();
-        ssu.shellSort(test);
-        printArray(test);
+        randArray randomArray = new randArray(10000000);
+        ArrayList<Integer> test = randomArray.getIntArray();
+        //ssu.shellSort(test);
+        //printArray(test);
+        test = randomArray.getIntArray();
+        ArrayList<Integer> test2 = test;
+        ArrayList<Integer> test3 = test;
+        //ssu.quickSort(test, 0, test.size() -1);
+
+        long startTime = System.nanoTime();
+        long endTime = System.nanoTime();
+        ssu.mergeSort(test);
+        long duration = (endTime - startTime);
+        System.out.println("Merge Sort: " + duration);
 
 
-        System.out.println(ssu.binarySearch(5,test));
+        startTime = System.nanoTime();
+        endTime = System.nanoTime();
+        ssu.quickSort(test2, 0, test.size() - 1);
+        duration = (endTime - startTime);
+        System.out.println("Quick Sort: " + duration);
+
+
+        startTime = System.nanoTime();
+        endTime = System.nanoTime();
+        ssu.shellSort(test3);
+        duration = (endTime - startTime);
+        System.out.println("Shell Sort: " + duration);
+
+        //System.out.println(ssu.binarySearch(5,test));
     }
 
     private static void printArray(int[] array){
