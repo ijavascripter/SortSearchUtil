@@ -1,19 +1,21 @@
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Created by jeff on 10/29/15.
- *
+ * <p>
  * A Collection of search and sort algorithms
  */
 public class SortSearchUtil {
 
-    public void shellSort(ArrayList<Integer> array){
+    public void shellSort(ArrayList<Integer> array) {
         int increment = array.size() / 2;
-        while(increment > 0){
-            for(int i = increment; i < array.size(); i++){
+        while (increment > 0) {
+            for (int i = increment; i < array.size(); i++) {
                 int j = i;
                 int temp = array.get(i);
-                while(j >= increment && array.get(j - increment) > temp){
+                while (j >= increment && array.get(j - increment) > temp) {
                     array.set(j, array.get(j - increment));
                     j = j - increment;
                 }
@@ -27,30 +29,36 @@ public class SortSearchUtil {
         }
     }
 
-    public int binarySearch(int value, int[] array){
+    public int binarySearch(int value, int[] array) {
         int first = 0;
         int last = array.length - 1;
         int middle = (first + last) / 2;
 
-        while(first <= last){
-            if(array[middle] < value){
+        while (first <= last) {
+            if (array[middle] < value) {
                 first = middle + 1;
-            }else if(array[middle] == value){
+            } else if (array[middle] == value) {
                 return array[middle];
-            }
-            else{
+            } else {
                 last = middle - 1;
             }
-            middle = (first + last)/2;
-            if(first > last){
+            middle = (first + last) / 2;
+            if (first > last) {
                 return -1;
             }
         }
         return -1;
     }
 
-    public <E extends Comparable<? super E>> List<E> mergeSort(List<E> m){
-        if(m.size() <= 1) return m;
+    /**
+     * Merg Sort
+     *
+     * @param m   List<E>
+     * @param <E> Generic E
+     * @return List<E>
+     */
+    public <E extends Comparable<? super E>> List<E> mergeSort(List<E> m) {
+        if (m.size() <= 1) return m;
 
         int middle = m.size() / 2;
         List<E> left = m.subList(0, middle);
@@ -58,38 +66,37 @@ public class SortSearchUtil {
 
         right = mergeSort(right);
         left = mergeSort(left);
-        List<E> result = merge(left, right);
 
-        return result;
+        return merge(left, right);
     }
 
-    public <E extends Comparable<? super E>> List<E> merge(List<E> left, List<E> right){
+    private <E extends Comparable<? super E>> List<E> merge(List<E> left, List<E> right) {
         List<E> result = new ArrayList<E>();
         Iterator<E> it1 = left.iterator();
         Iterator<E> it2 = right.iterator();
 
         E x = it1.next();
         E y = it2.next();
-        while (true){
+        while (true) {
             //change the direction of this comparison to change the direction of the sort
-            if(x.compareTo(y) <= 0){
+            if (x.compareTo(y) <= 0) {
                 result.add(x);
-                if(it1.hasNext()){
+                if (it1.hasNext()) {
                     x = it1.next();
-                }else{
+                } else {
                     result.add(y);
-                    while(it2.hasNext()){
+                    while (it2.hasNext()) {
                         result.add(it2.next());
                     }
                     break;
                 }
-            }else{
+            } else {
                 result.add(y);
-                if(it2.hasNext()){
+                if (it2.hasNext()) {
                     y = it2.next();
-                }else{
+                } else {
                     result.add(x);
-                    while (it1.hasNext()){
+                    while (it1.hasNext()) {
                         result.add(it1.next());
                     }
                     break;
@@ -100,10 +107,11 @@ public class SortSearchUtil {
     }
 
     /**
-     * Quicksort over an array
-     * @param arr int[]
-     * @param low
-     * @param high
+     * Quicksort over an array list of Integers
+     *
+     * @param arr  int[]
+     * @param low  int
+     * @param high int
      */
     public void quickSort(ArrayList<Integer> arr, int low, int high) {
         if (arr == null || arr.size() == 0)
