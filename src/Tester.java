@@ -9,7 +9,7 @@ public class Tester {
         SortSearchUtil ssu = new SortSearchUtil();
         randArray randomArray = new randArray(1000000);
         ArrayList<Integer> test = new ArrayList<>();
-
+        System.out.println("I just made this program so much better");
         test = randomArray.getIntArray();
         ArrayList<Integer> test2 = test;
         ArrayList<Integer> test3 = test;
